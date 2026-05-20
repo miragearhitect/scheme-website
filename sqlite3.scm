@@ -2,6 +2,8 @@
 		(import (chicken base)
 				(chicken foreign)
 				(chicken format)
+				(chicken blob)
+				(chicken memory)
 				scheme)
 
 		#>
@@ -16,18 +18,46 @@
                                                C_return(db);"))
 		
 		(define sqlite3-close (foreign-lambda void "sqlite3_close" (c-pointer (struct "sqlite3"))))
+		(define sqlite3-errmsg (foreign-lambda c-string "sqlite3_errmsg" (c-pointer (struct "sqlite3"))))
 
+		(define-foreign-type char-vector
+		  nonnull-c-string
+		  (compose list->string vector->list)
+		  (compose list->vector string->list))
+		
 		(define (sqlite3-exec db sql)
 		  (define-external (sql_callback (c-pointer userptr) (int ncols) ((c-pointer c-string) colvals) ((c-pointer c-string) colnames)) int
-			(display (format "ncol = ~a\n" ncols))
-			(display (format "colvals = ~a\n" colvals))
-			(display (format "colnames = ~a\n" colnames)))
+
+			(define (char->string base capacity index)
+			  
+			  (define strlen
+				(foreign-lambda int "strlen" char-vector))
+			  (assert (< index capacity))
+			  (let* ((ptr (pointer+ base index))
+					 (len (+ (strlen ptr) 1))
+					 (blob (make-blob len)))
+				(blob->string blob)))
+			
+			(do ((col ncols (sub1 col)))
+				((= col 0) print "done!")
+			  (let ((name   (char->string colnames ncols 0))
+					(values (char->string colvals ncols 0)))
+			  (printf "~a:~a\n" name values))
+			  )
+			
+			;; (display (format "ncol = ~a\n" ncols))
+			;; (display (format "colvals = ~a\n" colvals))
+			;; (display (format "colnames = ~a\n" colnames))
+			0)
 		  
 		  (define sqlite3--exec (foreign-safe-lambda* int ((c-pointer db) (c-string sql))
 													  "char *errmsg = NULL;
                                                        int res = sqlite3_exec(db, sql, sql_callback, NULL, &errmsg);
                                                        C_return(res);"))
-		  (sqlite3--exec db sql))
+		  (sqlite3--exec db sql)
+		  (when (not (= (sqlite3--exec db sql) (foreign-value "SQLITE_OK" int)))
+			 (error (format "sqlite3: ~a\n" (sqlite3-errmsg db))))
+		  )
 		
 ;; int sqlite3_exec(
   ;; sqlite3*,                                  /* An open database */
@@ -44,7 +74,9 @@
 
 (let ((db (sqlite3-open "test.db")))
   (display "Opened!\n")
-  (printf "exec: ~a\n" (sqlite3-exec db "CREATE TABLE Person (ID PRIMARY KEY, NAME TEXT, AGE INTEGER)"))
+  (printf "exec: ~a\n" (sqlite3-exec db "CREATE TABLE IF NOT EXISTS Person (ID PRIMARY KEY, NAME TEXT, AGE INTEGER)"))
+  ;; (printf "exec: ~a\n" (sqlite3-exec db "INSERT INTO Person (id, name, age) VALUES (0, 'Bob', 45)"))
+  (printf "exec: ~a\n" (sqlite3-exec db "SELECT * FROM Person"))
   (sqlite3-close db))
 
 ;; (module sqlite3 (open)
