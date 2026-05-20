@@ -1,4 +1,4 @@
-(module sqlite3 (sqlite3-open sqlite3-close)
+(module sqlite3 (sqlite3-open sqlite3-close sqlite3-exec)
 		(import (chicken base)
 				(chicken foreign)
 				(chicken format)
@@ -17,27 +17,16 @@
 		
 		(define sqlite3-close (foreign-lambda void "sqlite3_close" (c-pointer (struct "sqlite3"))))
 
-		(define-external (sql_callback (c-pointer userptr) (int ncols) (c-string-list colvals) (c-string-list colnames)) int
+		(define-external (sql_callback (c-pointer userptr) (int ncols) ((c-pointer c-string) colvals) ((c-pointer c-string) colnames)) int
 		  (display (format "ncol = ~a\n" ncols))
 		  (display (format "colvals = ~a\n" colvals))
 		  (display (format "colnames = ~a\n" colnames)))
 		  
 
-		;; (define sqlite3-exec (foreign-safe-lambda* int (())))
-		
-		;; (define sqlite3-open (foreign-lambda (c-pointer (struct "sqlite3")) "sqlite3__open" c-string))
-		;; (define sqlite3--exec (foreign-lambda int "sqlite3_exec" (c-pointer (struct "sqlite3") ())))
-
-		;; (define sqlite3-exec (foreign-safe-lambda* int ((c-string str))
-												   ;; ))
-		
-		;; C signature: int cb(void* userptr, int ncols, char** colvals, char** colnames)
-		;; (define-external (sql-callback ncols colvals colnames) int)
-		;; (define (sqlite3-exec db sql f)
-		  ;; (define-external (callback  (int ncols) (string colvals) (string colnames)) int
-			;; 0)
-		  ;; )
-
+		(define sqlite3-exec (foreign-safe-lambda* int ((c-pointer db) (c-string sql))
+												   "char *errmsg = NULL;
+                                                    int res = sqlite3_exec(db, sql, sql_callback, NULL, &errmsg);
+                                                    C_return(res);"))
 ;; int sqlite3_exec(
   ;; sqlite3*,                                  /* An open database */
   ;; const char *sql,                           /* SQL to be evaluated */
@@ -48,11 +37,12 @@
 		
 		)
 
-(import sqlite3)
+(import sqlite3
+		(chicken format))
 
 (let ((db (sqlite3-open "test.db")))
   (display "Opened!\n")
-  (sqlite3-exec db "INSERT (name) as 'hi' INTO TABLE") ;; Returns list of entries (name age ...)
+  (printf "exec: ~a\n" (sqlite3-exec db "CREATE TABLE Person (ID PRIMARY KEY, NAME TEXT, AGE INTEGER)") )
   (sqlite3-close db))
 
 ;; (module sqlite3 (open)
