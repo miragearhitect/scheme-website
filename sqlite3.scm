@@ -2,8 +2,8 @@
 		(import (chicken base)
 				(chicken foreign)
 				(chicken format)
-				(chicken blob)
 				(chicken memory)
+				(chicken plist)
 				scheme)
 
 		#>
@@ -19,55 +19,37 @@
 		
 		(define sqlite3-close (foreign-lambda void "sqlite3_close" (c-pointer (struct "sqlite3"))))
 		(define sqlite3-errmsg (foreign-lambda c-string "sqlite3_errmsg" (c-pointer (struct "sqlite3"))))
-
-		(define-foreign-type char-vector
-		  nonnull-c-string
-		  (compose list->string vector->list)
-		  (compose list->vector string->list))
 		
 		(define (sqlite3-exec db sql)
-		  (define-external (sql_callback (c-pointer userptr) (int ncols) ((c-pointer c-string) colvals) ((c-pointer c-string) colnames)) int
+		  (define char-vector-ref (foreign-lambda* c-string (((c-pointer c-string) str) (int index))
+												   "char *s = (str[index]);
+                                                    C_return(s);"))
 
-			(define (char->string base capacity index)
+		  (define rows '())
+		  
+		  (define-external (sql_callback (c-pointer userptr) (int ncols) ((c-pointer c-string) colvals) ((c-pointer c-string) colnames)) int
+			(let ((row '()))
+
+			  (do ((i 0 (+ i 1)))
+				  ((= i ncols))
+				(set! row
+					  (cons
+					   (string->symbol
+						(char-vector-ref colnames i))
+					   (char-vector-ref colvals i))))
 			  
-			  (define strlen
-				(foreign-lambda int "strlen" char-vector))
-			  (assert (< index capacity))
-			  (let* ((ptr (pointer+ base index))
-					 (len (+ (strlen ptr) 1))
-					 (blob (make-blob len)))
-				(blob->string blob)))
+			  (printf "row = ~a; rows = ~a\n" row rows)
+			  (set! rows (cons row rows))
+			0))
 			
-			(do ((col ncols (sub1 col)))
-				((= col 0) print "done!")
-			  (let ((name   (char->string colnames ncols 0))
-					(values (char->string colvals ncols 0)))
-			  (printf "~a:~a\n" name values))
-			  )
-			
-			;; (display (format "ncol = ~a\n" ncols))
-			;; (display (format "colvals = ~a\n" colvals))
-			;; (display (format "colnames = ~a\n" colnames))
-			0)
 		  
 		  (define sqlite3--exec (foreign-safe-lambda* int ((c-pointer db) (c-string sql))
 													  "char *errmsg = NULL;
                                                        int res = sqlite3_exec(db, sql, sql_callback, NULL, &errmsg);
                                                        C_return(res);"))
-		  (sqlite3--exec db sql)
+
 		  (when (not (= (sqlite3--exec db sql) (foreign-value "SQLITE_OK" int)))
-			 (error (format "sqlite3: ~a\n" (sqlite3-errmsg db))))
-		  )
-		
-;; int sqlite3_exec(
-  ;; sqlite3*,                                  /* An open database */
-  ;; const char *sql,                           /* SQL to be evaluated */
-  ;; int (*callback)(void*,int,char**,char**),  /* Callback function */
-  ;; void *,                                    /* 1st argument to callback */
-  ;; char **errmsg                              /* Error msg written here */
-;; );
-		
-		)
+			 (error (format "sqlite3: ~a\n" (sqlite3-errmsg db))))))
 
 (import sqlite3
 		(chicken format))
