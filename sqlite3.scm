@@ -17,16 +17,18 @@
 		
 		(define sqlite3-close (foreign-lambda void "sqlite3_close" (c-pointer (struct "sqlite3"))))
 
-		(define-external (sql_callback (c-pointer userptr) (int ncols) ((c-pointer c-string) colvals) ((c-pointer c-string) colnames)) int
-		  (display (format "ncol = ~a\n" ncols))
-		  (display (format "colvals = ~a\n" colvals))
-		  (display (format "colnames = ~a\n" colnames)))
+		(define (sqlite3-exec db sql)
+		  (define-external (sql_callback (c-pointer userptr) (int ncols) ((c-pointer c-string) colvals) ((c-pointer c-string) colnames)) int
+			(display (format "ncol = ~a\n" ncols))
+			(display (format "colvals = ~a\n" colvals))
+			(display (format "colnames = ~a\n" colnames)))
 		  
-
-		(define sqlite3-exec (foreign-safe-lambda* int ((c-pointer db) (c-string sql))
-												   "char *errmsg = NULL;
-                                                    int res = sqlite3_exec(db, sql, sql_callback, NULL, &errmsg);
-                                                    C_return(res);"))
+		  (define sqlite3--exec (foreign-safe-lambda* int ((c-pointer db) (c-string sql))
+													  "char *errmsg = NULL;
+                                                       int res = sqlite3_exec(db, sql, sql_callback, NULL, &errmsg);
+                                                       C_return(res);"))
+		  (sqlite3--exec db sql))
+		
 ;; int sqlite3_exec(
   ;; sqlite3*,                                  /* An open database */
   ;; const char *sql,                           /* SQL to be evaluated */
@@ -42,7 +44,7 @@
 
 (let ((db (sqlite3-open "test.db")))
   (display "Opened!\n")
-  (printf "exec: ~a\n" (sqlite3-exec db "CREATE TABLE Person (ID PRIMARY KEY, NAME TEXT, AGE INTEGER)") )
+  (printf "exec: ~a\n" (sqlite3-exec db "CREATE TABLE Person (ID PRIMARY KEY, NAME TEXT, AGE INTEGER)"))
   (sqlite3-close db))
 
 ;; (module sqlite3 (open)
