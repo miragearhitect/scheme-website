@@ -25,30 +25,29 @@
 												   "char *s = (str[index]);
                                                     C_return(s);"))
 
-		  (define rows '())
+
 		  
 		  (define-external (sql_callback (c-pointer userptr) (int ncols) ((c-pointer c-string) colvals) ((c-pointer c-string) colnames)) int
-			(let ((row '()))
-
-			  (do ((i 0 (+ i 1)))
-				  ((= i ncols))
-				(set! row
-					  (cons
-					   (string->symbol
-						(char-vector-ref colnames i))
-					   (char-vector-ref colvals i))))
-			  
-			  (printf "row = ~a; rows = ~a\n" row rows)
-			  (set! rows (cons row rows))
-			0))
-			
+			(let ((rows (pointer->object userptr)))
+			(do ((i 0 (+ i 1)))
+				((= i ncols))
+			  (set! rows
+			   (cons
+				(cons
+				 (string->symbol
+				  (char-vector-ref colnames i))
+				 (char-vector-ref colvals i))
+				rows))))
+			0)
 		  
-		  (define sqlite3--exec (foreign-safe-lambda* int ((c-pointer db) (c-string sql))
+		  
+		  (define sqlite3--exec (foreign-safe-lambda* int ((c-pointer db) (c-string sql) (c-pointer arg1))
 													  "char *errmsg = NULL;
-                                                       int res = sqlite3_exec(db, sql, sql_callback, NULL, &errmsg);
+                                                       int res = sqlite3_exec(db, sql, sql_callback, arg1, &errmsg);
                                                        C_return(res);"))
 
-		  (when (not (= (sqlite3--exec db sql) (foreign-value "SQLITE_OK" int)))
+		  (define rows  '())
+		  (when (not (= (sqlite3--exec db sql (object->pointer rows)) (foreign-value "SQLITE_OK" int)))
 			 (error (format "sqlite3: ~a\n" (sqlite3-errmsg db))))))
 
 (import sqlite3
