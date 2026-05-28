@@ -1,0 +1,259 @@
+body {
+  font-family: Sans;
+  max-width: 1024px;
+  margin: auto;
+}
+
+/* =========================================
+   SEARCH
+========================================= */
+
+#search {
+  width: 100%;
+  font-size: 1.05rem;
+  padding: 12px 20px 12px 40px;
+  border: 1px solid #ddd;
+  margin-bottom: 12px;
+}
+
+/* =========================================
+   BUTTONS
+========================================= */
+
+.actions {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.button {
+  display: inline-block;
+  outline: none;
+  cursor: pointer;
+  padding: 0 16px;
+  background-color: #0070d2;
+  border-radius: 0.25rem;
+  border: 1px solid #0070d2;
+  color: #fff;
+  font-size: 13px;
+  line-height: 30px;
+  font-weight: 400;
+  text-align: center;
+  text-decoration: none;
+}
+
+.button:hover {
+  background-color: #005fb2;
+  border-color: #005fb2;
+}
+
+.button-group {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+/* =========================================
+   TABLES
+========================================= */
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+  border: 1px solid #ddd;
+  font-size: 18px;
+}
+
+table th,
+table td {
+  text-align: left;
+  padding: 12px;
+}
+
+table tr {
+  border-bottom: 1px solid #ddd;
+}
+
+table tr.header,
+table tr:hover {
+  background-color: #f1f1f1;
+}
+
+/* =========================================
+   DASHBOARD
+========================================= */
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.stat-card {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 20px;
+  background: #fafafa;
+}
+
+.stat-card h2 {
+  margin-top: 0;
+  margin-bottom: 10px;
+}
+
+.stat-number {
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin: 12px 0;
+}
+
+section {
+  margin-bottom: 40px;
+}
+
+/* =========================================
+   EDIT + LOGIN FORMS ONLY
+========================================= */
+
+main > form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  max-width: 520px;
+
+  margin: 32px auto;
+
+  padding: 28px;
+
+  border: 1px solid #ddd;
+  border-radius: 10px;
+
+  background: #fafafa;
+
+  box-shadow:
+    0 2px 8px rgba(0,0,0,0.04);
+}
+
+main > form label {
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin-top: 4px;
+}
+
+main > form input,
+main > form textarea,
+main > form select {
+  width: 100%;
+
+  box-sizing: border-box;
+
+  padding: 12px 14px;
+
+  font-size: 1rem;
+
+  border: 1px solid #ccc;
+  border-radius: 8px;
+
+  background: white;
+
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+main > form textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+main > form input:focus,
+main > form textarea:focus,
+main > form select:focus {
+  outline: none;
+
+  border-color: #0070d2;
+
+  box-shadow:
+    0 0 0 3px rgba(0,112,210,0.15);
+}
+
+main > form button {
+  margin-top: 10px;
+
+  height: 44px;
+
+  border: none;
+  border-radius: 8px;
+
+  background: #0070d2;
+
+  color: white;
+
+  font-size: 1rem;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background 0.15s ease,
+    transform 0.05s ease;
+}
+
+main > form button:hover {
+  background: #005fb2;
+}
+
+main > form button:active {
+  transform: translateY(1px);
+}
+
+/* =========================================
+   PAGE LAYOUT
+========================================= */
+
+main {
+  padding: 20px 0 50px;
+}
+
+header {
+  margin-bottom: 30px;
+}
+
+header h1 {
+  margin-bottom: 16px;
+}
+
+footer {
+  margin-top: 40px;
+}
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media (max-width: 700px) {
+
+  body {
+    padding: 12px;
+  }
+
+  main > form {
+    padding: 20px;
+  }
+
+  .button-group {
+    flex-direction: column;
+  }
+
+  .button {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  table {
+    font-size: 14px;
+  }
+}

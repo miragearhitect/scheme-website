@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Index Page</title>
+
+    <style>
+      body {
+        font-family: Sans;
+      }
+
+      main {
+        max-width: 1024px;
+        margin: auto;
+      }
+
+      #search {
+        width: 100%;
+        font-size: 1.05rem;
+        padding: 12px 20px 12px 40px;
+        border: 1px solid #ddd;
+        margin-bottom: 12px;
+      }
+
+      .actions {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 12px;
+      }
+
+
+	  .button {
+		  display: inline-block;
+		  outline: none;
+		  cursor: pointer;
+		  padding: 0 16px;
+		  background-color: #0070d2;
+		  border-radius: 0.25rem;
+		  border: 1px solid #0070d2;
+		  color: #fff;
+		  font-size: 13px;
+		  line-height: 30px;
+		  font-weight: 400;
+		  text-align: center;
+		  text-decoration: none;
+	  }
+
+	  .button:hover {
+          background-color: #005fb2;  
+          border-color: #005fb2;
+      } 
+      
+
+      table {
+        border-collapse: collapse;
+        width: 100%;
+        border: 1px solid #ddd;
+        font-size: 18px;
+      }
+
+      table th,
+      table td {
+        text-align: left;
+        padding: 12px;
+      }
+
+      table tr {
+        border-bottom: 1px solid #ddd;
+      }
+
+      table tr.header,
+      table tr:hover {
+        background-color: #f1f1f1;
+      }
+
+	  /*------------------------------*/
+	  .container {
+		  display: grid;
+		  grid-template-columns: auto auto auto;
+		  /* background-color: dodgerblue; */
+		  padding: 10px;
+	  }
+	  .container div {
+		  background-color: #f1f1f1;
+		  border: 1px solid black;
+		  padding: 10px;
+		  font-size: 30px;
+		  text-align: center;
+	  }
+	  
+
+	  /*------------------------------*/
+    </style>
+  </head>
+
+  <body>
+    <main>
+      <h1>Auto Dealer</h1>
+	  <div class="button-group">
+		<a class="button" href="/">Dashboard</a>
+		<a class="button" href="/Employees">Employees</a>
+		<a class="button" href="/Inventory">Inventory</a>
+		<a class="button" href="/Sales">Sales</a>
+		<a class="button" href="/Users">Users</a>
+	  </div>
+      <section>
+		<h2>Dashboard</h2>
+		<div "container">
+		  <div>
+			<h3>Income (Current Year)</h3>
+			<p>+145,000$</p>
+		  </div>
+		  <div>
+			<h3>Employes</h3>
+			<p>The company currently employs 135 employees</p>
+		  </div>
+		  <div>
+			<h3>Users</h3>
+			<p>10 users exist in the database</p>
+		  </div>
+		  <div></div>
+		  <div></div>
+
+
+		</div>
+      </section>
+    </main>
+
+    <script>
+      function myFunction() {
+        let input = document.getElementById("search");
+        let filter = input.value.toLowerCase();
+        let table = document.getElementById("table");
+        let tr = table.getElementsByTagName("tr");
+
+        for (let i = 1; i < tr.length; i++) {
+          let td = tr[i].getElementsByTagName("td")[2];
+
+          if (td) {
+            let txtValue = td.textContent || td.innerText;
+
+            if (txtValue.toLowerCase().indexOf(filter) > -1) {
+              tr[i].style.display = "";
+            } else {
+              tr[i].style.display = "none";
+            }
+          }
+        }
+      }
+
+      function sortTable(n) {
+        let table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+
+        table = document.getElementById("table");
+        switching = true;
+        dir = "asc";
+
+        while (switching) {
+          switching = false;
+          rows = table.rows;
+
+          for (i = 1; i < (rows.length - 1); i++) {
+            shouldSwitch = false;
+
+            x = rows[i].getElementsByTagName("TD")[n];
+            y = rows[i + 1].getElementsByTagName("TD")[n];
+
+            if (dir == "asc") {
+              if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+                shouldSwitch = true;
+                break;
+              }
+            } else if (dir == "desc") {
+              if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+                shouldSwitch = true;
+                break;
+              }
+            }
+          }
+
+          if (shouldSwitch) {
+            rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+            switching = true;
+            switchcount++;
+          } else {
+            if (switchcount == 0 && dir == "asc") {
+              dir = "desc";
+              switching = true;
+            }
+          }
+        }
+      }
+    </script>
+  </body>
+</html>

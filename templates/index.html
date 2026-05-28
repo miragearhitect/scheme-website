@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Index Page</title>
+
+    <style>
+      body {
+        font-family: Sans;
+      }
+
+      main {
+        max-width: 1024px;
+        margin: auto;
+      }
+
+      #search {
+        width: 100%;
+        font-size: 1.05rem;
+        padding: 12px 20px 12px 40px;
+        border: 1px solid #ddd;
+        margin-bottom: 12px;
+      }
+
+      .actions {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 12px;
+      }
+
+
+	  .button {
+		  display: inline-block;
+		  outline: none;
+		  cursor: pointer;
+		  padding: 0 16px;
+		  background-color: #0070d2;
+		  border-radius: 0.25rem;
+		  border: 1px solid #0070d2;
+		  color: #fff;
+		  font-size: 13px;
+		  line-height: 30px;
+		  font-weight: 400;
+		  text-align: center;
+		  text-decoration: none;
+	  }
+
+	  .button:hover {
+          background-color: #005fb2;  
+          border-color: #005fb2;
+      } 
+      
+
+      table {
+        border-collapse: collapse;
+        width: 100%;
+        border: 1px solid #ddd;
+        font-size: 18px;
+      }
+
+      table th,
+      table td {
+        text-align: left;
+        padding: 12px;
+      }
+
+      table tr {
+        border-bottom: 1px solid #ddd;
+      }
+
+      table tr.header,
+      table tr:hover {
+        background-color: #f1f1f1;
+      }
+    </style>
+  </head>
+
+  <body>
+    <main>
+      <h1>Auto Dealer</h1>
+	  <div class="button-group">
+		<a class="button" href="/">Dashboard</a>
+		<a class="button" href="/Employees">Employees</a>
+		<a class="button" href="/Inventory">Inventory</a>
+		<a class="button" href="/Sales">Sales</a>
+		<a class="button" href="/Users">Users</a>
+	  </div>
+      <section>
+        <h3>Employees</h3>
+
+        <input
+          type="text"
+          id="search"
+          onkeyup="myFunction()"
+          placeholder="Search for names.."
+        >
+
+        <form method="POST">
+          <div class="actions">
+            <button class="button" type="submit" formaction="/edit">
+              Edit
+            </button>
+
+            <button class="button" type="submit" formaction="/delete">
+              Delete
+            </button>
+			<button class="button" type="submit" formaction="/edit">
+              Add
+            </button>
+			<button class="button" type="submit" formaction="/export">
+              Export (.csv)
+            </button>
+          </div>
+
+          <table id="table">
+            <tr class="header">
+              <th>Select</th>
+              <th onclick="sortTable(1)">ID</th>
+              <th onclick="sortTable(2)">Full Name</th>
+              <th onclick="sortTable(3)">Phone Number</th>
+              <th onclick="sortTable(4)">Address</th>
+              <th onclick="sortTable(5)">Email</th>
+              <th onclick="sortTable(6)">Salary</th>
+            </tr>
+
+            <tr>
+              <td>
+                <input type="checkbox" name="ids" value="1">
+              </td>
+              <td>1</td>
+              <td>William A Pearson</td>
+              <td>412-292-2702</td>
+              <td>291 Stuart Street</td>
+              <td>alva.zieman8@hotmail.com</td>
+              <td>$3,100</td>
+            </tr>
+
+            <tr>
+              <td>
+                <input type="checkbox" name="ids" value="2">
+              </td>
+              <td>2</td>
+              <td>Marisol M Wilks</td>
+              <td>857-271-1220</td>
+              <td>2239 Rainy Day Drive</td>
+              <td>tyrell.muraz@hotmail.com</td>
+              <td>$7,100</td>
+            </tr>
+
+            <tr>
+              <td>
+                <input type="checkbox" name="ids" value="3">
+              </td>
+              <td>3</td>
+              <td>Sally B Watkins</td>
+              <td>206-779-2246</td>
+              <td>2169 Hershell Hollow Road</td>
+              <td>jay.christians@hotmail.com</td>
+              <td>$3,800</td>
+            </tr>
+
+            <tr>
+              <td>
+                <input type="checkbox" name="ids" value="4">
+              </td>
+              <td>4</td>
+              <td>Marilyn E Sloan</td>
+              <td>734-228-7278</td>
+              <td>1416 Ripple Street</td>
+              <td>thad_hand1996@gmail.com</td>
+              <td>$10,100</td>
+            </tr>
+
+            <tr>
+              <td>
+                <input type="checkbox" name="ids" value="5">
+              </td>
+              <td>5</td>
+              <td>Jennifer J Xiong</td>
+              <td>947-939-6746</td>
+              <td>2970 Shingleton Road</td>
+              <td>cordell.kuh@hotmail.com</td>
+              <td>$2,900</td>
+            </tr>
+          </table>
+        </form>
+
+		<h3>Edit Employees</h3>
+		<form method="post">
+		  <label for="fname">Full Name:</label></br>
+		  <input type="text" id="fname" name="fname"></br>
+		  
+		  <label for="tel">Phone Number:</label></br>
+		  <input type="text" id="tel" name="tel"></br>
+		  
+		  <label for="address">Address:</label></br>
+		  <input type="text" id="address" name="adress"></br>
+		  
+		  <label for="email">Email:</label></br>
+		  <input type="email" id="email" name="emali"></br>
+		  
+		  <label for="salary">Salary:</label></br>
+		  <input type="text" id="salary" name="salary"></br>
+		  <input class="button" type="submit" value="Edit">
+		</form>
+      </section>
+    </main>
+
+    <script>
+      function myFunction() {
+        let input = document.getElementById("search");
+        let filter = input.value.toLowerCase();
+        let table = document.getElementById("table");
+        let tr = table.getElementsByTagName("tr");
+
+        for (let i = 1; i < tr.length; i++) {
+          let td = tr[i].getElementsByTagName("td")[2];
+
+          if (td) {
+            let txtValue = td.textContent || td.innerText;
+
+            if (txtValue.toLowerCase().indexOf(filter) > -1) {
+              tr[i].style.display = "";
+            } else {
+              tr[i].style.display = "none";
+            }
+          }
+        }
+      }
+
+      function sortTable(n) {
+        let table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+
+        table = document.getElementById("table");
+        switching = true;
+        dir = "asc";
+
+        while (switching) {
+          switching = false;
+          rows = table.rows;
+
+          for (i = 1; i < (rows.length - 1); i++) {
+            shouldSwitch = false;
+
+            x = rows[i].getElementsByTagName("TD")[n];
+            y = rows[i + 1].getElementsByTagName("TD")[n];
+
+            if (dir == "asc") {
+              if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+                shouldSwitch = true;
+                break;
+              }
+            } else if (dir == "desc") {
+              if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+                shouldSwitch = true;
+                break;
+              }
+            }
+          }
+
+          if (shouldSwitch) {
+            rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+            switching = true;
+            switchcount++;
+          } else {
+            if (switchcount == 0 && dir == "asc") {
+              dir = "desc";
+              switching = true;
+            }
+          }
+        }
+      }
+    </script>
+  </body>
+</html>

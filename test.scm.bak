@@ -1,0 +1,14 @@
+(define (output string)
+	(string-append
+	"["string"]"))
+
+
+(define (template)
+	(string-append
+		"<section>\n"
+		"  <p>" (output "Hello, from Scheme Template!") "</p>\n"
+		"</section>\n"))
+
+(define out (template))
+(display out)
+(exit 0)

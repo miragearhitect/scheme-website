@@ -1,0 +1,8 @@
+;; -*- mode: scheme; -*-
+'(html
+  (head
+    (title "Index Page"))
+  (body
+    (main
+     (h1 "Index")
+	 (ol (li (p "Apples"))))))
